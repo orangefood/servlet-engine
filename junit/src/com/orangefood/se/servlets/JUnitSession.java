@@ -40,11 +40,11 @@ public class JUnitSession extends HttpServlet
 			pw.println("\t\t<creationTime>"+session.getCreationTime()+"</creationTime>");
 			pw.println("\t\t<accessedTime>"+session.getLastAccessedTime()+"</accessedTime>");
 			pw.println("\t\t<maxInactiveInterval>"+session.getMaxInactiveInterval()+"</maxInactiveInterval>");
-			Enumeration enum = session.getAttributeNames();
+			Enumeration enm= session.getAttributeNames();
 			pw.println("\t\t<attributes>");
-			while( enum.hasMoreElements() )
+			while( enm.hasMoreElements() )
 			{
-				String strAttrName = (String)enum.nextElement();
+				String strAttrName = (String)enm.nextElement();
 				pw.println("\t\t\t<attribute>");
 				pw.println("\t\t\t\t<name>"+strAttrName+"</name>");
 				pw.println("\t\t\t\t<value>"+session.getAttribute(strAttrName)+"</value>");
