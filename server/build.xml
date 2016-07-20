@@ -72,7 +72,7 @@
 
 	<target name="compile_common" depends="init,config,repackage">
 		<!-- Compile the java code from ${java} into ${build} -->
-		<javac srcdir="${src}" destdir="${classes}" debug="${debug}" classpath="${servlet-lib}" optimize="true" >
+		<javac includeantruntime="false" srcdir="${src}" destdir="${classes}" debug="${debug}" classpath="${servlet-lib}" optimize="true" >
 			<!-- Exclude https support -->
 			<exclude name="com/orangefood/se/net/SecureSocketListener.java"/>
 			<!-- Exclude shutdown support -->
@@ -88,13 +88,13 @@
 		</copy>
 	</target>
 	<target name="compile_https" depends="init,compile_common,gen_key" if="https_support" >
-		<javac srcdir="${src}" destdir="${classes}" debug="${debug}" classpath="${servlet-lib}" optimize="true" >
+		<javac includeantruntime="false" srcdir="${src}" destdir="${classes}" debug="${debug}" classpath="${servlet-lib}" optimize="true" >
 			<!-- Include https support -->
 			<include name="com/orangefood/se/net/SecureSocketListener.java"/>
 		</javac>
 	</target>
 	<target name="compile_shutdown" depends="init,compile_common" if="shutdown_support">
-		<javac srcdir="${src}" destdir="${classes}" debug="${debug}" classpath="${servlet-lib}" optimize="true" >
+		<javac includeantruntime="false" srcdir="${src}" destdir="${classes}" debug="${debug}" classpath="${servlet-lib}" optimize="true" >
 			<!-- Include shutdown support -->
 			<include name="com/orangefood/se/ShutdownHandler.java"/>
 			<include name="com/orangefood/se/StopServer.java"/>

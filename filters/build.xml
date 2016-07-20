@@ -102,27 +102,27 @@
 	
   	<!-- cookie filter -->
 	<target name="compile_cookie" if="build_cookie">
-		<javac srcdir="${src}" includes="**/cookie/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
+		<javac includeantruntime="false" srcdir="${src}" includes="**/cookie/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
 	</target>  		  
 
    	<!-- header filter -->
 	<target name="compile_header" if="build_header">
-		<javac srcdir="${src}" includes="**/header/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
+		<javac includeantruntime="false" srcdir="${src}" includes="**/header/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
 	</target>  		  
 
   	<!-- logging filter -->  		  
 	<target name="compile_logging" if="build_logging">
-		<javac srcdir="${src}" includes="**/logging/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
+		<javac includeantruntime="false" srcdir="${src}" includes="**/logging/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
 	</target>  		  
 
   	<!-- post filter -->  		  
 	<target name="compile_post" if="build_post">
-		<javac srcdir="${src}" includes="**/post/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
+		<javac includeantruntime="false" srcdir="${src}" includes="**/post/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
 	</target>  		  
 
   	<!-- session filter -->
 	<target name="compile_session" if="build_session">
-		<javac srcdir="${src}" includes="**/session/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
+		<javac includeantruntime="false" srcdir="${src}" includes="**/session/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
 	</target>  		  
 	
 	

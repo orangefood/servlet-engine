@@ -82,11 +82,11 @@
 	</target>
 	
 	<target name="compile_file" if="build_file" depends="init">
-		<javac srcdir="${src}" includes="**/file/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true"/>
+		<javac includeantruntime="false" srcdir="${src}" includes="**/file/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true"/>
 	</target>
 	
 	<target name="compile_index" if="build_index" depends="init">
-		<javac srcdir="${src}" includes="**/index/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true"/>
+		<javac includeantruntime="false" srcdir="${src}" includes="**/index/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true"/>
 	</target>
 	
 

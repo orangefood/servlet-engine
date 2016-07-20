@@ -1,1 +1,5 @@
-<!--index servlet has no mapping-->
+<!-- index servlet has no mapping -->
+        <servlet-mapping>
+                <servlet-name>index</servlet-name>
+                <url-pattern></url-pattern>
+        </servlet-mapping>

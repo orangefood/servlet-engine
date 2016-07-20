@@ -13,11 +13,11 @@ public class Server
 {
 	private static URL[] s_aurlConfig;
 	private static SocketListener[] s_asl=null;
-	private static HashMap s_hmProperties=new HashMap();
+	private static HashMap<String,Properties> s_hmProperties=new HashMap<String,Properties>();
 	
 	public static Properties getProperties(String strProperties) throws IOException
 	{
-		Properties prop = (Properties)s_hmProperties.get(strProperties);
+		Properties prop = s_hmProperties.get(strProperties);
 		if( prop==null )
 		{
 			prop = new Properties();
@@ -80,8 +80,7 @@ public class Server
 		{
 			aurl[n]=new URL(astr[n]);
 		}
-		String strConfig = Server.class.getResource("/config").toString();
-		aurl[astr.length]=new URL(strConfig);
+		aurl[astr.length]=Server.class.getResource("/config");
 		Server server = new Server(aurl);
 		server.start();
 	}	
