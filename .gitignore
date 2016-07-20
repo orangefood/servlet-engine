@@ -1,0 +1,4 @@
+# ignore relase directories
+release/
+# ignore vim stuff
+.*.swp
