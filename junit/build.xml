@@ -1,0 +1,76 @@
+<project name="orangefood-servletengine-junit" basedir="." default="all">
+	<!-- debugging off by default -->
+	<property name="debug" value="false"/>
+	
+	<!-- load the build configuration properties -->
+	<property name="configuration" value="${basedir}/configure.properties"/>
+	<property file="${configuration}"/>
+	
+	<!-- set the source directories -->
+	<property name="src" value="${basedir}/src"/>
+	<property name="config" value="${basedir}/config/"/>
+		
+	<!-- set the build directories -->
+	<property name="release" value="${basedir}/release/"/>
+	<property name="build" value="${release}/build"/>
+	<property name="classes" value="${build}/classes"/>
+	<property name="javadoc" value="${build}/api/server"/>
+
+	<!-- The servlet library -->
+	<property name="server_dir" value="${basedir}/../server"/>
+	<property name="servlet_lib" value="${server_dir}/lib/servlet-2.3.jar"/>	
+
+	<!-- Initilization target, adds tasks, sets time stamp and creates dir struct -->
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		
+		<!-- Create the build directory structure -->
+		<mkdir dir="${release}"/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${classes}"/>
+	</target>
+
+	<!-- Compiles server code to .class copies non-CVS/non-.java to the dest dir -->	
+	<target name="compile" depends="init">
+		<!-- Compile the java code from ${java} into ${build} -->
+		<javac srcdir="${src}" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}" />
+
+		<!-- Copy any other non-cvs non-java fils to ${classes} -->
+		<copy todir="${classes}">
+			<fileset dir="${src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+	
+	<!-- Jars .class + other files -->
+	<target name="jar" depends="init,compile">
+		<jar jarfile="${release}/${ant.project.name}.jar" basedir="${classes}">
+			<manifest>
+				<attribute name="Main-Class" value="com.orangefood.se.Server"/>
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="debug" depends="init">
+		<antcall target="all">
+			<param name="debug" value="true"/>
+		</antcall>
+	</target>
+	
+	<!-- The default build, makes everything -->
+	<target name="all" depends="init,jar" />
+	
+	<!-- Clears up after the build -->
+	<target name="clean">
+		<!-- Delete the ${release} -->
+		<delete dir="${release}"/>
+	</target>
+	
+	<!-- Configures the build -->
+	<target name="configure" depends="init">
+		<!-- noop -->
+	</target>
+
+</project>

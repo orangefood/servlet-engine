@@ -1,0 +1,4 @@
+        <handler name="https" class="com.orangefood.se.http.HttpHandler" >
+                <context>default</context>
+                <scheme>https</scheme>
+        </handler>

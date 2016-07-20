@@ -1,0 +1,301 @@
+<project name="orangefood-servletengine-filters" basedir="." default="all">
+	<!-- debugging off by default -->
+	<property name="debug" value="false"/>
+	
+	<!-- load the build configuration properties -->
+	<property name="configuration" value="${basedir}/configure.properties"/>
+	<property file="${configuration}"/>
+	
+	<!-- set the source directories -->
+	<property name="src" value="${basedir}/src"/>
+	<property name="config" value="${basedir}/config/"/>
+		
+	<!-- set the build directories -->
+	<property name="release" value="${basedir}/release/"/>
+	<property name="build" value="${release}/build"/>
+	<property name="classes" value="${build}/classes"/>
+
+
+	<!-- The servlet library -->
+	<property name="server_dir" value="${basedir}/../server"/>
+	<property name="servlet_lib" value="${server_dir}/lib/servlet-2.3.jar"/>
+
+	<!-- The default build, makes everything -->
+	<target name="all" depends="init,jar" />
+	
+	<target name="debug" depends="init">
+		<antcall target="all">
+			<param name="debug" value="true"/>
+		</antcall>
+	</target>
+	
+	
+	<!-- Initilization target, adds tasks, sets time stamp and creates dir struct -->
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		
+		<!-- Create the build directory structure -->
+		<mkdir dir="${release}"/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${classes}"/>
+
+        <!-- Check if the web.xml needs to be updated -->
+
+        <condition property="config_cookie.uptodate">
+            <or>
+                <uptodate srcfile="${config}/cookie-filter.xml" targetfile="${classes}/config/web.xml"/>
+                <uptodate srcfile="${config}/cookie-mapping.xml" targetfile="${classes}/config/web.xml"/>
+            </or>
+        </condition>
+        <condition property="config_header.uptodate">
+            <or>
+                <uptodate srcfile="${config}/header-filter.xml" targetfile="${classes}/config/web.xml"/>
+                <uptodate srcfile="${config}/header-mapping.xml" targetfile="${classes}/config/web.xml"/>
+            </or>
+        </condition>
+        <condition property="config_logging.uptodate">
+            <or>
+                <uptodate srcfile="${config}/logging-filter.xml" targetfile="${classes}/config/web.xml"/>
+                <uptodate srcfile="${config}/file-mapping.xml" targetfile="${classes}/config/web.xml"/>
+            </or>
+        </condition>
+        <condition property="config_post.uptodate">
+            <or>
+                <uptodate srcfile="${config}/post-filter.xml" targetfile="${classes}/config/web.xml"/>
+                <uptodate srcfile="${config}/post-mapping.xml" targetfile="${classes}/config/web.xml"/>
+            </or>
+        </condition>
+        <condition property="config_session.uptodate">
+            <or>
+                <uptodate srcfile="${config}/session-filter.xml" targetfile="${classes}/config/web.xml"/>
+                <uptodate srcfile="${config}/session-mapping.xml" targetfile="${classes}/config/web.xml"/>
+            </or>
+        </condition>
+
+        <condition property="web.xml.uptodate">
+            <and>
+                <isset property="config_cookie.uptodate"/>
+                <isset property="config_header.uptodate"/>
+                <isset property="config_logging.uptodate"/>
+                <isset property="config_post.uptodate"/>
+                <isset property="config_session.uptodate"/>
+            </and>
+        </condition>
+	</target>
+	
+<!--
+ !
+ !    Compile Targets
+ ! 
+ -->
+
+	<!-- Compiles server code to .class copies non-CVS/non-.java to the dest dir -->	
+	<target name="compile" depends="init,config,compile_cookie,compile_header,compile_logging,compile_post,compile_session">
+		<!-- Copy any other non-cvs non-java fils to ${classes} -->
+		<copy todir="${classes}">
+			<fileset dir="${src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+	
+  	<!-- cookie filter -->
+	<target name="compile_cookie" if="build_cookie">
+		<javac srcdir="${src}" includes="**/cookie/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
+	</target>  		  
+
+   	<!-- header filter -->
+	<target name="compile_header" if="build_header">
+		<javac srcdir="${src}" includes="**/header/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
+	</target>  		  
+
+  	<!-- logging filter -->  		  
+	<target name="compile_logging" if="build_logging">
+		<javac srcdir="${src}" includes="**/logging/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
+	</target>  		  
+
+  	<!-- post filter -->  		  
+	<target name="compile_post" if="build_post">
+		<javac srcdir="${src}" includes="**/post/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
+	</target>  		  
+
+  	<!-- session filter -->
+	<target name="compile_session" if="build_session">
+		<javac srcdir="${src}" includes="**/session/*" destdir="${classes}" debug="${debug}" classpath="${servlet_lib}:${server_dir}/release/build/classes/" optimize="true" />
+	</target>  		  
+	
+	
+<!--
+ !
+ !   Config Targets
+ !
+ -->
+  
+	<!-- copy the config directory over -->
+	<target name="config" depends="init,web.xml,config_header,config_post,config_cookie,config_session,config_logging">
+	</target>
+
+	<target name="web.xml" depends="init" unless="web.xml.uptodate" >
+		<!-- copy the web.xml file -->
+		<copy file="${basedir}/../release/build/classes/config/web.xml" todir="${classes}/config"/>
+	</target>
+	
+	<target name="config_cookie" depends="init" if="build_cookie" unless="config_cookie.uptodate">
+		<xslt style="${config}/web.xsl" in="${classes}/config/web.xml" out="${classes}/config/web.out">
+			<param name="filter" expression="${config}/cookie-filter.xml"/>
+			<param name="filtermapping" expression="${config}/cookie-mapping.xml"/>			
+		</xslt>
+		<move file="${classes}/config/web.out" tofile="${classes}/config/web.xml"/>
+	</target>	
+
+	<target name="config_header" depends="init" if="build_header" unless="config_header.uptodate">
+		<xslt style="${config}/web.xsl" in="${classes}/config/web.xml" out="${classes}/config/web.out">
+			<param name="filter" expression="${config}/header-filter.xml"/>
+			<param name="filtermapping" expression="${config}/header-mapping.xml"/>			
+		</xslt>
+		<move file="${classes}/config/web.out" tofile="${classes}/config/web.xml"/>
+	</target>	
+	
+	<target name="config_logging" depends="init" if="build_logging" unless="config_logging.uptodate">
+		<xslt style="${config}/web.xsl" in="${classes}/config/web.xml" out="${classes}/config/web.out">
+			<param name="filter" expression="${config}/logging-filter.xml"/>
+			<param name="filtermapping" expression="${config}/logging-mapping.xml"/>			
+		</xslt>
+		<move file="${classes}/config/web.out" tofile="${classes}/config/web.xml"/>
+	</target>	
+	
+	<target name="config_post" depends="init" if="build_post" unless="config_post.uptodate">
+		<xslt style="${config}/web.xsl" in="${classes}/config/web.xml" out="${classes}/config/web.out">
+			<param name="filter" expression="${config}/post-filter.xml"/>
+			<param name="filtermapping" expression="${config}/post-mapping.xml"/>			
+		</xslt>
+		<move file="${classes}/config/web.out" tofile="${classes}/config/web.xml"/>
+	</target>	
+				
+	<target name="config_session" depends="init" if="build_session" unless="config_session.uptodate">
+		<xslt style="${config}/web.xsl" in="${classes}/config/web.xml" out="${classes}/config/web.out">
+			<param name="filter" expression="${config}/session-filter.xml"/>
+			<param name="filtermapping" expression="${config}/session-mapping.xml"/>			
+		</xslt>
+		<move file="${classes}/config/web.out" tofile="${classes}/config/web.xml"/>
+	</target>				
+	
+	<!-- Jars .class + other files -->
+	<target name="jar" depends="init,compile">
+		<jar jarfile="${release}/${ant.project.name}.jar" basedir="${classes}">
+		</jar>
+	</target>
+	
+	
+<!--
+ !
+ !   Clean Targets
+ !
+ -->
+
+	<!-- Clears up after the build -->
+	<target name="clean">
+		<!-- Delete the ${release} -->
+		<delete dir="${release}"/>
+	</target>
+	
+
+<!--
+ !
+ !   Build Configuration Targets
+ !
+ -->
+
+	<!-- Configures the build -->
+	<target name="configure" depends="init">
+  		  <delete file="${configuration}"/>
+		  <touch file="${configuration}"/>
+  		  <antcall target="query_cookie"/>
+  		  <antcall target="query_header"/>
+  		  <antcall target="query_logging"/>
+  		  <antcall target="query_post"/>
+  		  <antcall target="query_session"/>  		    		    		  
+	</target>
+	
+	<target name="query_cookie">
+		  <input
+    	   message="Build cookie filter?"
+		   validargs="yes,no"
+		   addproperty="build_cookie_response"
+  		  />
+  		  <condition property="write_build_cookie">
+	  		  <istrue value="${build_cookie_response}"/>
+  		  </condition>
+  		  <antcall target="write_build_cookie"/>
+	</target>
+	<target name="write_build_cookie" if="write_build_cookie">
+		<echo file="${configuration}" append="true">build_cookie
+</echo>
+	</target>
+
+	<target name="query_header">
+		  <input
+    	   message="Build header filter?"
+		   validargs="yes,no"
+		   addproperty="build_header_response"
+  		  />
+  		  <condition property="write_build_header">
+	  		  <istrue value="${build_header_response}"/>
+  		  </condition>
+  		  <antcall target="write_build_header"/>
+	</target>
+	<target name="write_build_header" if="write_build_header">
+		<echo file="${configuration}" append="true">build_header
+</echo>
+	</target>
+
+	<target name="query_logging">
+		  <input
+    	   message="Build logging filter?"
+		   validargs="yes,no"
+		   addproperty="build_logging_response"
+  		  />
+  		  <condition property="write_build_logging">
+	  		  <istrue value="${build_logging_response}"/>
+  		  </condition>
+  		  <antcall target="write_build_logging"/>
+	</target>
+	<target name="write_build_logging" if="write_build_logging">
+		<echo file="${configuration}" append="true">build_logging
+</echo>
+	</target>	
+
+	<target name="query_post">
+		  <input
+    	   message="Build post filter?"
+		   validargs="yes,no"
+		   addproperty="build_post_response"
+  		  />
+  		  <condition property="write_build_post">
+	  		  <istrue value="${build_post_response}"/>
+  		  </condition>
+  		  <antcall target="write_build_post"/>
+	</target>
+	<target name="write_build_post" if="write_build_post">
+		<echo file="${configuration}" append="true">build_post
+</echo>
+	</target>	
+	
+	<target name="query_session">
+		  <input
+    	   message="Build session filter?"
+		   validargs="yes,no"
+		   addproperty="build_session_response"
+  		  />
+  		  <condition property="write_build_session">
+	  		  <istrue value="${build_session_response}"/>
+  		  </condition>
+  		  <antcall target="write_build_session"/>
+	</target>
+	<target name="write_build_session" if="write_build_session">
+		<echo file="${configuration}" append="true">build_session
+</echo>
+	</target>	
+		
+</project>

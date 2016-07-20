@@ -1,0 +1,8 @@
+        <!-- The listener that listens for shutdown requests -->
+        <listener name="shutdown" class="com.orangefood.se.net.TCPSocketListener" >
+                <!-- <bind-address></bind-address> -->
+                <port>9009</port>
+                <listen-timeout>50</listen-timeout>
+                <read-timeout>10000</read-timeout>
+                <handler>shutdown</handler>
+        </listener>

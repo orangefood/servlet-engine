@@ -1,0 +1,229 @@
+<html>
+<head><title>orangefood.com servlet engine build instructions</title></head>
+<body>
+
+<h1><a name="top">Build Instructions</a></h1>
+<p><a href="index.html">home</a> | <a href="install.html">install</a> &rarr;</p>
+<hr/>
+<p>
+<a href="#ant">Ant</a><br/>
+<a href="#quick">Quick &amp; Easy</a><br/>
+<a href="#advanced">Advanced Build Configuration</a><br/>
+<a href="#targets">Other Ant Targets</a>
+</p>
+<p>
+These instructions will guide you through the process of building the
+Orangefood.com Servlet Engine.  Once build the next step is to
+<a href="install.html">install</a> the servlet engine.
+
+<h2><a name="ant">Ant</a></h2>
+<p>
+The build scripts are designed to work with the 
+<a href="http://ant.apache.org">Ant</a>, a Java-based build tool.
+The ant executable should be in your <code>PATH</code>.
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="quick">Quick &amp; Easy</a></h2>
+<p>
+The default build configuration will build the Server, supporting 
+servlets and filters, and the JUnit test servlets and filters.
+To build the servlet engine with the default configuration execute
+<code>ant</code> from the based directory of the distribution tree.
+</p>
+<p>
+example:<br/>
+<code><b>$</b> ant</code><br/>
+The resultant <code>JAR</code> file will be located in the
+<code>release</code> directory.  See <a href="install.html">Installing the Orangefood Servlet Engine</a>
+for information on how to install the servlet engine.
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="advanced">Advanced Build Configuration</a></h2>
+<p>
+The build can be configured to selectivly build individual components
+and component features of the Orangefood.com Servlet Engine.  
+See <a href="design.html">Design of the Orangefood.com Servlet Engine</a>
+for information on the design of the components.
+</p>
+<p>
+The configuration information is stored in a file called <code>configuration.properties</code>.
+There is a version of this file in the base directory and in each component directoy.
+</p>
+<p>
+There are two ways to configure the build system, manual edit the configuration 
+files or use the <code>configure</code> target of the Ant build script.  
+It is important to understand each component and when deciding which 
+components to include.  The following section describes the available options.
+</p>
+
+<h3>Configuration Options</h3>
+<p>
+The Orangefood.com Servlet engine is broken down into four components
+</p>
+<ul>
+<li>server (dependencies: none)</li>
+<li>servlets (dependencies: server)</li>
+<li>filters (dependencies: server)</li>
+<li>JUnit (dependencies: server)</li>
+</ul>
+<p>
+There are runtime dependencies that are not inforced by
+the build script and are not well documented.  If you choose not to 
+use the default build configuration you should be careful to satisfy 
+those dependencies.
+</p>
+
+<h4>Base configuration</h4>
+<p>
+The base configuration identifies which components from the list above 
+will be built.
+</p>
+<p>Directives:</p>
+<ul>
+<li><code>build_server</code> - Instructs the build system to build the server code</li>
+<li><code>build_servlets</code> - Instructs the build system to build the default servlets</li>
+<li><code>build_filters</code> - Instructs the build system to build this default filters</li>
+<li><code>build_junit</code> - Instructs the build system to build the test code</li>
+</ul>
+
+
+<h4>Server configuration</h4>
+<p>
+The server component is the kernel of the Orangefood.com Servlet Engine if 
+you do not build the server you will not have a servlet engine.
+</p>
+<p>Directives:</p>
+<ul>
+<li>
+	<code>repackage_servlet_lib</code> - Causes the <code>servlet.jar</code>
+	file to be expanded and its classes inclued in the 
+	<code>orangefood-servletengine.jar</code> file.  This saves some space and
+	allows the entire server to be distributed as a single file.  If the
+	<code>servlet.jar</code> is not repackaged then it must be included in
+	the <code>CLASSPATH</code> at runtime.
+</li>
+<li><code>http_support</code> - Instructs build system to include directives that 
+	enable HTTP connections to the server in the <code>server.xml</code>.</li>
+<li><code>https_support</code> - Instructs the build system to compile the 
+	<code>SecureSocketListener</code> and configure the <code>server.xml</code>
+	to listen for SSL conntection.</li>
+<li><code>shutdown_support</code> - Instructs the build system to compile and
+	configure the server to accept shut down commands on a socket.</li>
+</ul>
+
+<h4>Servlets configuration</h4>
+<p>
+The servlets component contains the functionality for a basic 
+HTTP server, i.e. returning static files and returning indicies 
+for directories.  
+</p>
+<p>Directives:</p>
+<ul>
+<li>
+<code>build_file</code> -
+Instructs the build system to build the file servlet.  The file servlet 
+is responsible for returning static content from a file on the file
+system.
+</li>
+<li>
+<code>build_index</code> - 
+Instructs the build system to build the index servlet.  The index servlet 
+is responsible for returning a directory index.  This servlet is called from
+the file servlet when a &quot;welcome file&quot; is not found.  (dependencies:
+file servlet.)
+</li>
+</ul>
+
+<h4>Filters configuration</h4>
+<p>
+The default filters are responsible for parsing HTTP requests, 
+managing sessions and logging access requests. 
+</p>
+<p>Directives:</p>
+<ul>
+<li>
+<code>build_header</code> - 
+Instructs the build system to build the header filter.  This filter reads HTTP 
+headers from the request stream and places them in the request object.
+(dependencies: none.)
+</li>
+<li>
+<code>build_post</code> - 
+Instructs the build system to build the post filter.  This filter reads 
+the body of a <code>POST</code> request whose content type is
+<code>application/x-www-form-urlencoded</code>.  (dependencies:
+header filter.)
+</li>
+<li>
+<code>build_cookie</code> -
+Instructs the build system to build the cookie filter.  This filter takes
+cookies from the HTTP headers and places them in the request object. (dependencies:
+header filter.)
+</li>
+<li>
+<code>build_session</code> -
+Instructs the build system to build the session management filter.  This filter
+uses cookies to maintain session information across multiple requests. (dependencies:
+cookie filter.)
+</li>
+<li>
+<code>build_logging</code> -
+Instructs the build system to build the logging filter.  This filter logs all
+requests using the Common Log File Format. (dependencies: none.)
+
+</li>
+</ul>
+
+	
+		
+<h4>JUnit configuration</h5>
+<p>
+This directive instructs the build system to build the JUnit test code.
+The test code depends on the HTTP parsing and Session filters.
+</p>
+<p>Directives:</p>
+<ul>
+<li><em>none</em></li>
+</ul>
+
+<h3>Manual Configuration</h3>
+<p>
+The code and build configuration file for each component is located in 
+directories named after the component beneath the based directory of the distribution directory.
+A file called <code>configure.properties</code> is located in the base directory
+and in each of the component directories.  These files contains the directives that determine
+which features will be built.  To prevent a component of feature from being
+build either remove the directive or comment out the directive by placing
+the '#' character at the start of the line.  If you choose not to use the
+default build configuration you should be careful to satisfy the dependencies.
+</p>
+<h3>Ant-based Configuration</h3>
+<p>
+You may also use ant to modify the build configuration by entering the following
+command:<br/>
+<code><b>$</b> ant configure</code>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+
+<h2><a name="targets">Other Ant Targets</a></h2>
+<h3>Clean</h3>
+<p>
+To remove all generated code and runtime configuration files use the <code>clean</code>
+target:<br/>
+<code><b>$</b> ant clean</code><br/>
+</p>
+<h3>Debug</h3>
+<p>
+By default the java code is compiled without debuging information.  To include
+debugging information use the <code>debug</code> target:<br/>
+<code><b>$</b> ant debug</code>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<hr/>
+<p><a href="index.html">home</a> | <a href="install.html">install</a> &rarr;</p>
+</body>
+</html>

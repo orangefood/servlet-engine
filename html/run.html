@@ -1,0 +1,111 @@
+<html>
+<head><title>orangefood.com servlet engine run instructions</title></head>
+<body>
+
+<h1><a name="top">Run Instructions</a></h1>
+<p>&larr; <a href="install.html">install</a> | <a href="index.html">home</a> | <a href="configure.html">configure</a> &rarr;</p>
+<hr/>
+<p>
+<a href="#unix">Unix</a><br/>
+<a href="#windows">Windows</a><br/>
+<a href="#manual">Manual</a><br/>
+<a href="#options">Options</a><br/>
+</p>
+<p>
+This dcoument contains instructions for starting and stoping the Servlet
+Engine.
+</p>
+
+<h2><a name="unix">Unix</a></h2>
+<p>
+During the installation a script was copied to <code>/etc/init.d/</code>.
+This script can be used to start and stop the server.  The following commands
+allow you to start, stop and restart the server:
+<ul>
+<li>To start:<br/><code>/etc/init.d/orangefood-servletengine start</code></li>
+<li>To stop:<br/><code>/etc/init.d/orangefood-servletengine stop</code></li>
+<li>To restart:<br/><code>/etc/init.d/orangefood-servletengine restart</code></li>
+</ul>
+</p>
+<p>
+To make the server start when the system is turned on or restarted either
+use the <code>chkconfig</code> program or create links to the init
+script in the approprate runlevel directories.
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="windows">Windows</a></h2>
+<p>
+The installation instructions <a href="install.html#windows_service">describe</a> 
+how to install the server as a Windows Service.  Once the service has been 
+configured you can start, stop and restart the server using the service control
+methods provided by windows.  A windows service can also be configured to 
+start when the system is turned on or restarted.
+</p>
+<h3>Service Control Panel</h3>
+<p>
+Widows provides a graphics interface for controling services.  To use this
+method you must open the <code>Control Panel</code> and then open the
+<code>Services</code> item (in newer versions of Windows this is
+located in the <code>Administrative Tools</code> folder). The service
+is installed as &quot;Orangefood.com Servlet Engine&quot;.
+</p>
+<h3>Command Line</h3>
+<p>
+Windows services can also be controled on the commanf line.  Use the following
+commands to stop or start the server:
+<ul>
+<li>To start:<br/><code>net start &quot;Orangefood.com Servlet Engine&quot;</code></li>
+<li>To stop:<br/><code>net stop &quot;Orangefood.com Servlet Engine&quot;</code></li>
+</ul>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="manual">Manual</a></h2>
+<p>
+You can also start or stop the server manually by invoking the 
+Java Virtual Machine directly.  The server is started when the 
+JVM is passed the name of the main class (<code>com.orangefood.se.Server</code>).  The server then listens
+for a shutdown command with the approprate password.  A class is provided to send
+the shutdown command, <code>com.orangefood.se.StopServer</code>. These instructions 
+assume that the default port (9009) and password (shutdownpass) are being used, see the 
+<a href="configure.html">configure</a> document for instructions on how to
+change the default port and password.  To start or stop the server,
+change to the directory into which the <code>orangefood-servletengine.jar</code>
+was installed and use the following commands:
+<ul>
+<li>To start:<br/><code>java -jar orangefood-servletengine.jar</code></li>
+<li>To stop:<br/><code> java -cp ornagefood-servletengine.jar com.orangefood.se.StopServer shutdownpass 9009</code></li>
+</ul>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="options">Options</a></h2>
+<p>
+When the server is started additional configuration locations can be passed in
+on the command line.  The configuration locations are specified as URLs.  The 
+server will search for configuration files (e.g. <code>server.xml</code>, <code>web.xml</code>)
+starting with the first specified location until the file is found.  The default configuration
+files are located in the <code>config/</code> directory within the .jar file.
+Examples:
+<ul>
+<li>To use the directory <code>/etc/servlet-config/</code> as a configuration directory:<br/>
+<code>java -jar orangefood-servletengine.jar file:/etc/servlet-config/</code></li>
+<li>To use the directory <code>/config</code> on a webserver hosted on
+<code>servlet.orangefood.com</code>:<br/>
+<code>java -jar orangefood-servletengine.jar
+http://servlet.orangefood.com/config/</code></li>
+<li>Multiple locations can be specified and will be searched in order.
+To combine the two locations from above, searching first in the directory then
+the web server:<br/>
+<code>
+java -jar orangefood-servletengine.jar
+file:/etc/servlet-config/
+http://servlet.orangefood.com/config/
+</code></li>
+</ul>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+<hr />
+<p>&larr; <a href="install.html">install</a> | <a href="index.html">home</a> | <a href="configure.html">configure</a> &rarr;</p></body>
+</html>

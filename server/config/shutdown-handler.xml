@@ -1,0 +1,4 @@
+        <!-- The handler for shutdown requests -->
+        <handler name="shutdown" class="com.orangefood.se.ShutdownHandler" >
+                <password>shutdownpass</password>
+        </handler>

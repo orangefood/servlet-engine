@@ -1,0 +1,3 @@
+SHUTDOWNPORT=9009
+SHUTDOWNPASSWORD=shutdownpass
+JARFILE=/usr/local/orangefood-servletengine/orangefood-servletengine.jar

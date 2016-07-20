@@ -1,0 +1,5 @@
+		<!-- reads and parses HTTP headers -->
+		<filter>
+			<filter-name>header</filter-name>
+			<filter-class>com.orangefood.se.filters.header.HeaderFilter</filter-class>		
+		</filter>

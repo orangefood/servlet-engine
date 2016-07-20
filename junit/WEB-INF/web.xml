@@ -1,0 +1,30 @@
+<web-app>
+	<filter>
+		<filter-name>junit filter</filter-name>
+		<filter-class>com.orangefood.se.filters.JUnitFilter</filter-class>
+		<init-param> 
+			<param-name>comment</param-name> 
+			<param-value>this is a comment for the junit filter</param-value> 
+		</init-param>		
+	</filter>
+	<filter-mapping>
+		<filter-name>junit filter</filter-name>
+		<url-pattern>/junit/*</url-pattern>
+	</filter-mapping>
+	<servlet>
+		<servlet-name>junit spy</servlet-name>
+		<servlet-class>com.orangefood.se.servlets.JUnitSpy</servlet-class>
+	</servlet>
+	<servlet>
+		<servlet-name>junit session</servlet-name>
+		<servlet-class>com.orangefood.se.servlets.JUnitSession</servlet-class>
+	</servlet>
+	<servlet-mapping> 
+		<servlet-name>junit spy</servlet-name>
+		<url-pattern>/junit/spy/*</url-pattern>
+	</servlet-mapping>	 
+	<servlet-mapping> 
+		<servlet-name>junit session</servlet-name>
+		<url-pattern>/junit/session/*</url-pattern>
+	</servlet-mapping>	 
+</web-app>

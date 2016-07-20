@@ -1,0 +1,5 @@
+		<!-- reads and parses the body from a POST encoded as application/x-www-form-urlencoded -->
+		<filter>
+			<filter-name>post</filter-name>
+			<filter-class>com.orangefood.se.filters.post.PostParameterFilter</filter-class>		
+		</filter>

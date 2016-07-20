@@ -1,0 +1,66 @@
+<project name="orangefood-servletengine" basedir="." default="install">
+	<property name="copyfrom" value="${basedir}"/>
+	<property name="html" value="${basedir}/html/"/>
+	<property name="jarfile" value="${basedir}/${ant.project.name}.jar"/>	
+	
+	<!-- The install target -->
+	<target name="install" depends="setPrefix,copyCommon,installUnix,installWindows">
+	</target>
+	
+	<target name="setPrefix" unless="prefix">
+		<!-- Determine the OS -->
+		<condition property="isUnix">
+			<os family="unix"/>
+		</condition>
+		<condition property="isWindows">
+			<os family="windows" />
+		</condition>
+		<!-- Set the prefix -->		
+		<condition property="prefix" value="c:\Program Files">
+			<isset property="isWindows"/>
+		</condition>		
+		<condition property="prefix" value="/usr/local">
+			<isset property="isUnix"/>
+		</condition>
+		<condition property="destdir" value="/">
+			<not>
+				<isset property="destdir"/>
+			</not>
+		</condition>
+	</target>
+	
+	<!-- Copies the common files for all platforms -->
+	<target name="copyCommon">
+		<echo>Install from ${basedir} to ${destdir}/${prefix}</echo>
+		<mkdir dir="${destdir}/${prefix}/${ant.project.name}"/>
+		<copy todir="${destdir}/${prefix}/${ant.project.name}/html">
+			<fileset dir="${html}"/>
+			<fileset file="${jarfile}"/>
+		</copy>		
+		<copy file="${jarfile}" todir="${destdir}/${prefix}/${ant.project.name}" />
+	</target>
+	
+	<!-- Copies the jar file, the HTML directory and the
+	     startup scripts -->
+	<target name="installUnix" if="isUnix">
+		<copy file="${basedir}/scripts/sysconfig/${ant.project.name}" todir="${destdir}/etc/sysconfig/" />
+		<copy file="${basedir}/scripts/${ant.project.name}" todir="${destdir}/etc/init.d/" />
+		<chmod file="${destdir}/etc/init.d/${ant.project.name}" perm="755" />
+<!--
+		<exec executable="chkconfig">
+		  <arg value="- -add"/>
+  		  <arg value="${ant.project.name}"/>
+		</exec>
+-->
+	</target>
+	
+	<target name="installWindows" if="isWindows">
+		<condition property="prefix" value="c:\Program Files">
+				<not>
+					<isset property="prefix"/>
+				</not>
+		</condition>
+		<echo>Install from ${basedir} to ${prefix}</echo>
+	</target>	
+
+</project>

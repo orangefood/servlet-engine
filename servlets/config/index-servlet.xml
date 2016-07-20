@@ -1,0 +1,4 @@
+        <servlet>
+                <servlet-name>index</servlet-name>
+                <servlet-class>com.orangefood.se.servlets.index.IndexServlet</servlet-class>
+        </servlet>

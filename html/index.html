@@ -1,0 +1,137 @@
+<html>
+<head><title>orangefood.com servlet engine</title></head>
+<body>
+<h1>This is the orangefood.com servlet engine</h1>
+<p>
+The orangefood.com Servlet Engine is a Java based servlet container, 
+for Servlets 2.3. The primary focus is on creating a small and 
+highly customizable server suitable for embedding in an application 
+or as a stand-alone server.
+</p>
+
+<h2>License</h2>
+<p>
+The orangefood.com Servlet Engine is licensed under the 
+<a href="gpl.html">GNU General Public License (GPL) version 2.</a>
+</p>
+
+<h2>Documentation</h2>
+<p>
+<a href="build.html">Build Instructions</a><br/>
+<a href="install.html">Install Instructions</a><br/>
+<a href="run.html">Run Instructions</a><br/>
+<a href="configure.html">Configure Instructions</a><br/>
+<a href="design.html">Design</a><br/>
+</p>
+
+<h2>Links</h2>
+<p>
+You may find the following links helpful when working with the Servlet Engine.
+</p>
+<p>
+<a href="servlet-api">Servlet 2.3 API</a><br/>
+<a href="http://sourceforge.net/projects/of-servlet/">Sourceforge Project Page</a><br/>
+<a href="http://ant.apache.org/">Apache Ant Project</a></br/>
+</p>
+
+
+<h2>Testing</h2>
+<p>
+The following URL is used in verifying the build.
+</p>
+<p>
+<b>*note</b>: The pages must be served by the Servlet Engine.
+If you are viweing this document directly from the file system
+the test link will not work.
+</p>
+<p>
+<a href="junit-tests/index.html">Junit Test Page</a><br/>
+</p>
+
+
+<h2>Limitations</h2>
+<ul>
+<li>Sessions are maintained via cookies only, no URL rewriting is supported</li>
+<li>Only supports version 0 (netscape) cookies</li>
+</ul>
+
+<h2>Todo</h2>
+<ul>
+	<li>Server</li>
+	<ul>
+		<li>Allow configuration via api</li>
+		<li>Log messages from <code>ServletContext.log()</code> somewhere other than <code>System.out</code></li>
+		<li>Log application messages</li>
+		<li><span style="{text-decoration: line-through;}">Allow location of configuration files to be passed in on the command line</span> - 13-Jun-2004</li>
+		<li><span style="{text-decoration: line-through;}">Create startup and shutdown scripts</span> - 13-Jun-2004</li>
+		<li><span style="{text-decoration: line-through;}">Logging Filter</span> - 01-Mar-2004</li>
+		<li><span style="{text-decoration: line-through;}">move some of the parsing done by HttpServletRequest to filters</span> - 02-Mar-2004</li>
+		<li><span style="{text-decoration: line-through;}">change server config to be xml based</span> - 03-Mar-2004</li>
+	</ul>
+
+	<li>HTTP Support</li>
+	<ul>
+		<li>handle ziped/gziped transfer encoding</li>
+		<li>handle the character encoding for request/response</li>
+		<li>Support custom error pages with dynamic content</li>
+		<li>Set the maximum number of handlers</li>
+		<li><span style="{text-decoration: line-through;}">SSL Support</span> - 15-Jun-2004</li>
+		<li><span style="{text-decoration: line-through;}">handle persistent connections (depends on chunked transfers)</span> - 10-May-2004</li>
+		<li><span style="{text-decoration: line-through;}">handle chunked transfer encoding</span> - 10-May-2004</li>
+		<li><span style="{text-decoration: line-through;}">handle method post</span> - 25-Feb-2004</li>
+	</ul>
+	
+	<li>Servlet 2.3 Support</li>
+	<ul>
+		<li>RCF 2109 (version 1) style cookies</li>		
+		<li>Correctly handle forward/include in RequestDispatcher</li>
+		<li>Servlet authentication</li>
+		<li>SSL Attributes, &sect; SRV.4.7</li>
+		<li><span style="{text-decoration: line-through;}">Temporary working directory, &sect; SRV.3.7.1</span> - 20-Jun-2004</li>
+		<li><span style="{text-decoration: line-through;}">Servlet Life Cycle Events</span> - 19-Jun-2004</li>
+		<li><span style="{text-decoration: line-through;}">Application Life Cycle Events</span> - 19-Jun-2004</li>
+		<li><span style="{text-decoration: line-through;}">Honor <code>&lt;load-on-startup&gt;</code> tag</span> - 19-Jun-2004</li>
+		<li><span style="{text-decoration: line-through;}">Servlet Life Cycle Events</span> - 18-Jun-2004</li>
+		<li><span style="{text-decoration: line-through;}">handle cookies</span> - 25-Feb-2004</li>
+		<li><span style="{text-decoration: line-through;}">support filters</span> - 01-Mar-2004</li>
+		<li><span style="{text-decoration: line-through;}">handle sessions</span> - 01-Mar-2004</li>
+	</ul>
+	
+	<li>Servlets</li>
+	<ul>
+		<li>File Servlet to handle <code>If-Modified-Since</code> header</li>
+		<li>File servlet to use <code>getResource()</code></li>
+		<li>ServletContext to use other than files for root directory</li>
+		<li>Create CGI-BIN servlet</li>
+	</ul>
+		
+	<li>Web Application Support</li>	
+	<ul>
+		<li>Deploy WAR Files</li>
+		<li>Support multiple web applications</li>
+		<li><span style="{text-decoration: line-through;}">read the web.xml file from the /WEB-INF in the web application</span> - 25-Feb-2004</li>
+		<li><span style="{text-decoration: line-through;}">load classes from the web application, e.g /WEB-INF/classes and /WEB-INF/lib/*.jar</span> - 01-Mar-2004</li>		
+	</ul>
+	
+	<li>Build Tasks</li>
+	<ul>
+		<li><span style="{text-decoration: line-through;}">Selectivly build servlets and filters</span> - 07-May-2004</li>
+	</ul
+
+	<li>Documentation</li>	
+	<ul>
+		<li>Design</li>
+		<li>SSL Documentation</li>
+		<li><span style="{text-decoration: line-through;}">Running Instructions</span> 20-Jun-204</li>
+		<li><span style="{text-decoration: line-through;}">Configuring Instructions</span> 20-Jun-2004</li>
+		<li><span style="{text-decoration: line-through;}">Install Instructions</span> - 13-Jun-2004</li>
+		<li><span style="{text-decoration: line-through;}">Build Instructions</span> - 07-May-2004</li>
+	</ul>	
+	<li>Examples</li>
+	<ul>
+		<li>Create an example of how to embed the servlet engine</li>
+	</ul>
+</ul>
+
+</body>
+</html>

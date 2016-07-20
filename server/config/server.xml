@@ -1,0 +1,37 @@
+<!-- This is the server configuration file -->
+<server>
+	<tempdir>servlet-engine</tempdir>
+	
+	<!-- The context tag defines an environment in
+         which client requests are processed
+         All handlers need a reference to a context
+         and that context must be defined before the
+         handler can make use of it. -->
+         
+	<context name="default" class="com.orangefood.se.servlet.ServletContextImpl" >
+		<hostname>localhost</hostname>
+		<document-root>html</document-root>		
+		<tempdir>default-context</tempdir>
+	</context>
+
+    <!-- The handler tag defines an implementation of 
+         com.orangeood.se.net.SocketHandler is capable 
+         of handling a particular connection protocol.  
+         The connection is passed to the handler from 
+         a listener defined further on in this file.  
+         A handler must be defined in this file 
+         before a listener can make use of it. -->
+
+<!--handler tags go here-->
+
+    <!-- The listener tag defines an implementation of 
+         com.orangefood.se.net.SocketListener that 
+         listens for an incomming connection on the given 
+         ip address, with the given port and with a given 
+         timeout. When a connection is recived the sock is 
+         handed off to the named handler which implements 
+         com.orangefood.se.net.SocketHandler -->
+	
+<!--listener tags go here-->
+
+</server>

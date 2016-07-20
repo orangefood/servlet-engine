@@ -1,0 +1,5 @@
+        <!-- The handler for http requests -->
+        <handler name="http" class="com.orangefood.se.http.HttpHandler" >
+                <context>default</context>
+                <scheme>http</scheme>
+        </handler>

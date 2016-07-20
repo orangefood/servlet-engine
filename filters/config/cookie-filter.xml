@@ -1,0 +1,5 @@
+		<!-- reads and parses the cookies -->
+		<filter>
+			<filter-name>cookie</filter-name>
+			<filter-class>com.orangefood.se.filters.cookie.CookieFilter</filter-class>		
+		</filter>

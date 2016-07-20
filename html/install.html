@@ -1,0 +1,161 @@
+<html>
+<head><title>orangefood.com servlet engine install instructions</title></head>
+<body>
+<h1><a name="top">Install Instructions</top></h1>
+<p>&larr; <a href="build.html">build</a> | <a href="index.html">home</a> | <a href="run.html">run</a> &rarr;</p>
+<hr/>
+
+<p>
+<a href="#ant">Ant</a><br/>
+<a href="#quick">Quick &amp; Easy</a><br/>
+<a href="#manual">Manual install</a><br/>
+<a href="#scripts">Startup Script install</a><br/>
+</p>
+<p>
+These instructions will guide you through the process of installing the Orangefood.com
+Servlet Engine.  Instructions are provided for both Windows and Unix systems.
+</p>
+
+<h2><a name="ant">Ant</a></h2>
+<p>
+The scripts are designed to work with 
+<a href="http://ant.apache.org">Ant</a>, a Java-based build tool.
+The ant executable should be in your <code>PATH</code>.
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="quick">Quick &amp; Easy</a></h2>
+<p>
+The Ant script will copy and configure all necessary files 
+to approprate locations.  The script is designed to work 
+with both Windows and Unix based systems.<br />
+<b>*note:</b> You must
+have sufficient privileges to install the software.  Generally this
+means that you must be superuser under Unix and under windows
+you must have local administrator privileges.
+</p>
+<p>
+<ol>
+<li>'cd' to the directory that contains project.</li>
+<li>type: 'ant install'</li>
+</ol>
+This will install the server to the default location.
+The default location for the install is:
+<table border="1">
+<tr><td>Windows</td><td><code>C:\Program Files\orangefood-servletengine\</code></td></tr>
+<tr><td>Unix</td><td><code>/usr/local/orangefood-servletengine</code></td></tr>
+</table>
+The documents are served from the <code>html</code> directory below 
+the install directory.  The location of the install can be changed 
+by passing a <code>prefix</code> variable to Ant.  For example, 
+<code>ant install -Dprefix=/home/user/</code> will install the server to
+<code>/home/user/orangefood-servletengine</code>.  For Unix based instalations
+the install script also install a startup script and startup configuration 
+file.  See <a href="#scripts">Startup Scripts</a> for more information.
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="manual">Manual Install</a></h2>
+<p>
+If you don't have Ant installed or you want to customize the 
+instalation process you can manually install the Servlet Engine.  The entire
+server and all configuration files are encapsulated in the .jar file 
+(<code>orangefoo-servletengine.jar</code>.) 
+</p>
+<p>
+The manual installation instruction are to simple copy that file to a 
+desired location and create a directory to hold the HTML files to 
+be served buy the servlet engine.
+</p>
+
+<p>
+To install the server:
+<ol>
+<li>Create a directoy to hold the program. Example:
+<code>mkdir /usr/local/of-servlet</code></li>
+<li>Copy the .jar file, (release/orangefood-servletengine.jar) to the 
+instalation directry. Example:
+<code>cp release/orangefood-servletengine.jar /usr/local/of-servlet</code>
+<li>Create a directory to hold the HTML documents.  Example:
+<code>mkdir /usr/local/of-servlet/html'</code></li>
+</ol>
+*note: The default configuration servers HTML files from a directory called
+<code>html</code> below the directory in which the server is started from.
+It is important to execute the java command (see <a href="running.html">running</a>)
+from the parent directory.
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="scripts">Startup Scripts</a></h2>
+<p>
+Included in the download are scripts that will start and stop
+the Servlet Engine.
+</p>
+<h3><a name="unix_scripts">Unix Scripts</a></h3>
+<p>
+If you used ant to install the server then the init script and the 
+configuration file have been coppied to <code>/etc/init.d</code> and
+<code>/etc/sysconfig</code>.  If you manually installed the server
+then you need to install the init script and the configuration file
+manually.  Copy the init script, <code>scripts/orangefood-servletengine</code>
+to <code>/etc/init.d/</code>.  Copy the configuration file 
+<code>scripts/sysconfig/orangefood-servletengine</code> to 
+<code>/etc/sysconfig/</code>.
+</p>
+<p>
+The init script is compatable with
+<code>chkconfig</code>.  To put the Servlet Engine under management 
+of <code>chkconfig</code> type (as root): <code>chkconfig --add orangefood-servletengien</code>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h3><a name="windows_service">Windows Service</a></h3>
+<p>
+Through the use of the JavaService program writen by
+<a href="http://www.alexandriasc.com/index.html">Alexandria Software Consulting</a>
+the Orangefood.com Servlet Engine can be installed as a Windows NT Servce.
+You must <a href="http://www.alexandriasc.com/software/JavaService/index.html">download</a>
+and unpack the JavaService program.  By default the instalation assumes that
+you have unpacked the JavaService program to <code>C:\Program Files\javaservice</code>.
+</p>
+<p>
+Before you run the script to install the service you must have satisfied these 
+prerequisites:
+<ul>
+<li>Installed the Orangefood.com Service Engines</li>
+<li>Downloaded and unpacked the JavaService program</li>
+<li>Set the <code>JAVA_HOME</code> environment varriable to the location of the JRE</li>
+</ul>
+</p>
+<p>
+A script is provided to configure and install the service.  The script called <code>ntservice.bat</code>
+can be found in the <code>scripts<code> directory of the distribution.
+If you have installed the Servlet Engine and the unpacked the JavaService program to their defualt 
+locations you can simply run <code>ntservice -install</code>.  If you did not used
+the default locations you can use the following command line parameters to configure
+the service appropratly.
+<table>
+<tr>
+<td>-server_dir [path]</td>
+<td>Sets the directory the server is installed in</td>
+</tr>
+<tr>
+<td>-javaservice [path]</td>
+<td>Sets the path to the JavaService program</td>
+</tr>
+<tr>
+<td>-password [password]</td>
+<td>Sets the shutdown password to use</td>
+</tr>
+<tr>
+<td>-port [port]</td>
+<td>Sets the port number for the shutdown listener
+</td>
+</tr>
+</table>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+<hr />
+<p>&larr; <a href="build.html">build</a> | <a href="index.html">home</a> | <a href="run.html">run</a> &rarr;</p>
+</body>
+</html>

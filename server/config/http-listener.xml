@@ -1,0 +1,8 @@
+        <!-- The listener that listens for HTTP requests -->
+        <listener name="http" class="com.orangefood.se.net.TCPSocketListener" >
+                <!-- <bind-address></bind-address> -->
+                <port>8008</port>
+                <listen-timeout>5000</listen-timeout>
+                <read-timeout>10000</read-timeout>
+                <handler>http</handler>
+        </listener>

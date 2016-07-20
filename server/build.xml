@@ -1,0 +1,234 @@
+<project name="orangefood-servletengine-server" basedir="." default="all">
+	<!-- debugging off by default -->
+	<property name="debug" value="false"/>
+	
+	<!-- load the build configuration properties -->
+	<property name="configuration" value="${basedir}/configure.properties"/>
+	<property file="${configuration}"/>
+	
+	<!-- set the source directories -->
+	<property name="src" value="${basedir}/src"/>
+	<property name="config" value="${basedir}/config/"/>
+		
+	<!-- set the build directories -->
+	<property name="release" value="${basedir}/release/"/>
+	<property name="build" value="${release}/build"/>
+	<property name="classes" value="${build}/classes"/>
+	<property name="javadoc" value="${build}/api/server"/>
+
+	<!-- The servlet library -->
+	<property name="servlet-lib" value="${basedir}/lib/servlet-2.3.jar"/>
+
+	<!-- The SSL key properties -->
+	<property name="keys" value="${release}/keys"/>
+	<property name="keytool.in" value="${basedir}/keys/keytool.in"/>
+	<property name="keystore" value="${keys}/serverKeys"/>
+
+	<!-- Initilization target, adds tasks, sets time stamp and creates dir struct -->
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		
+		<!-- Create the build directory structure -->
+		<mkdir dir="${release}"/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${classes}"/>
+		<mkdir dir="${keys}"/>
+		
+		<!-- Check if the servlet.jar needs to be unpacked -->
+		<uptodate property="repackage.uptodate" srcfile="${servlet-lib}" targetfile="${classes}/javax" />
+
+		<!-- Check if the web.xml needs to be updated -->
+                <condition property="config_http.uptodate">
+                        <or>
+                                <uptodate srcfile="${config}/http-handler.xml" targetfile="${classes}/config/server.xml"/>
+                                <uptodate srcfile="${config}/http-listener.xml" targetfile="${classes}/config/server.xml"/>
+                        </or>
+                </condition>
+                <condition property="config_https.uptodate">
+                        <or>
+                                <uptodate srcfile="${config}/https-handler.xml" targetfile="${classes}/config/server.xml"/>
+                                <uptodate srcfile="${config}/https-listener.xml" targetfile="${classes}/config/server.xml"/>
+                        </or>
+                </condition>
+                <condition property="config_shutdown.uptodate">
+                        <or>
+                                <uptodate srcfile="${config}/shutdown-handler.xml" targetfile="${classes}/config/server.xml"/>
+                                <uptodate srcfile="${config}/shutdown-listener.xml" targetfile="${classes}/config/server.xml"/>
+                        </or>
+                </condition>
+                <condition property="server.xml.uptodate">
+                        <and>
+                                <isset property="config_http.uptodate"/>
+                                <isset property="config_https.uptodate"/>
+                                <isset property="config_shutdown.uptodate"/>
+                        </and>
+                </condition>
+		<uptodate property="gen_key.uptodate" srcfile="${keytool.in}" targetfile="${keystore}"/>
+	</target>
+
+	<!-- Compiles server code to .class copies non-CVS/non-.java to the dest dir -->	
+	<target name="compile" depends="init,config,repackage,compile_common,compile_https,compile_shutdown" />
+
+	<target name="compile_common" depends="init,config,repackage">
+		<!-- Compile the java code from ${java} into ${build} -->
+		<javac srcdir="${src}" destdir="${classes}" debug="${debug}" classpath="${servlet-lib}" optimize="true" >
+			<!-- Exclude https support -->
+			<exclude name="com/orangefood/se/net/SecureSocketListener.java"/>
+			<!-- Exclude shutdown support -->
+			<exclude name="com/orangefood/se/ShutdownHandler.java"/>
+			<exclude name="com/orangefood/se/StopServer.java"/>
+		</javac>
+
+		<!-- Copy any other non-cvs non-java fils to ${classes} -->
+		<copy todir="${classes}">
+			<fileset dir="${src}">
+				<exclude name="**/*.java"/>
+			</fileset>
+		</copy>
+	</target>
+	<target name="compile_https" depends="init,compile_common,gen_key" if="https_support" >
+		<javac srcdir="${src}" destdir="${classes}" debug="${debug}" classpath="${servlet-lib}" optimize="true" >
+			<!-- Include https support -->
+			<include name="com/orangefood/se/net/SecureSocketListener.java"/>
+		</javac>
+	</target>
+	<target name="compile_shutdown" depends="init,compile_common" if="shutdown_support">
+		<javac srcdir="${src}" destdir="${classes}" debug="${debug}" classpath="${servlet-lib}" optimize="true" >
+			<!-- Include shutdown support -->
+			<include name="com/orangefood/se/ShutdownHandler.java"/>
+			<include name="com/orangefood/se/StopServer.java"/>
+		</javac>
+	</target>
+
+	<target name="gen_key" if="https_support" unless="gen_key.uptodate">
+		<!--  keytool -genkey -alias server -keyalg RSA -keystore serverKeys -->
+		<exec executable="keytool" input="${keytool.in}">
+			<arg value="-genkey"/>
+			<arg value="-alias"/>
+			<arg value="server"/>
+			<arg value="-keyalg"/>
+			<arg value="RSA"/>
+			<arg value="-keystore"/>
+			<arg value="${keystore}"/>
+		</exec>
+	</target>
+	
+	<!-- Unpacks the servlet jar file -->
+	<target name="repackage" depends="init" if="repackage_servlet_lib" unless="repackage.uptodate">
+		<!-- Unload the servlet jar to the classes directory -->
+		<unjar src="${servlet-lib}" dest="${classes}"/>
+		<touch>
+			<fileset dir="${classes}"/>
+		</touch>
+		<delete dir="${classes}/META-INF/"/>
+	</target>
+	
+	<!-- copy the config directory over -->
+	<target name="config" depends="init,config_http,config_https,config_shutdown">
+		<copy file="${config}/response_codes.properties" todir="${classes}/config/"/>
+		<copy file="${config}/web.xml" todir="${classes}/config/"/>
+	</target>
+	
+	<target name="server.xml" depends="init" unless="server.xml.uptodate">
+		<copy file="${config}/server.xml" todir="${classes}/config/"/>
+	</target>
+
+	<target name="config_http" depends="init,server.xml" if="http_support" unless="config_http.uptodate">
+		<xslt style="${config}/server.xsl" in="${classes}/config/server.xml" out="${classes}/config/server.out">
+			<param name="handler" expression="${config}/http-handler.xml"/>
+			<param name="listener" expression="${config}/http-listener.xml"/>
+		</xslt>
+		<move file="${classes}/config/server.out" tofile="${classes}/config/server.xml"/>
+	</target>
+	
+	<target name="config_https" depends="init,server.xml" if="https_support" unless="config_https.uptodate">
+		<xslt style="${config}/server.xsl" in="${classes}/config/server.xml" out="${classes}/config/server.out">
+			<param name="handler" expression="${config}/https-handler.xml"/>
+			<param name="listener" expression="${config}/https-listener.xml"/>
+		</xslt>
+		<move file="${classes}/config/server.out" tofile="${classes}/config/server.xml"/>
+	</target>
+
+	<target name="config_shutdown" depends="init,server.xml" if="shutdown_support" unless="config_shutdown.uptodate">
+		<xslt style="${config}/server.xsl" in="${classes}/config/server.xml" out="${classes}/config/server.out">
+			<param name="handler" expression="${config}/shutdown-handler.xml"/>
+			<param name="listener" expression="${config}/shutdown-listener.xml"/>
+		</xslt>
+		<move file="${classes}/config/server.out" tofile="${classes}/config/server.xml"/>
+	</target>
+
+	<!-- Jars .class + other files -->
+	<target name="jar" depends="init,compile">
+		<jar jarfile="${release}/${ant.project.name}.jar" basedir="${classes}">
+			<manifest>
+				<attribute name="Main-Class" value="com.orangefood.se.Server"/>
+			</manifest>
+		</jar>
+	</target>
+	
+	<target name="debug" depends="init">
+		<antcall target="all">
+			<param name="debug" value="true"/>
+		</antcall>
+	</target>
+	
+	<!-- The default build, makes everything -->
+	<target name="all" depends="init,jar" />
+	
+	<!-- Clears up after the build -->
+	<target name="clean">
+		<!-- Delete the ${release} -->
+		<delete dir="${release}"/>
+	</target>
+	
+	<!-- Configures the build -->
+	<target name="configure" depends="init,clean_configure,query_repackage,query_http,query_https,query_shutdown,write_repackage,write_http,write_https,write_shutdown" />
+	<target name="clean_configure">
+                  <delete file="${configuration}"/>
+                  <touch file="${configuration}"/>
+	</target>
+
+	<target name="query_repackage">
+		<input message="Repackage the servlet library?" validargs="yes,no" addproperty="write_repackage_response" />
+  		<condition property="write_repackage">
+	  		<istrue value="${write_repackage_response}"/>
+		</condition>
+	</target>
+	<target name="query_http">
+		<input message="Include HTTP support?" validargs="yes,no" addproperty="write_http_response" />
+  		<condition property="write_http">
+	  		<istrue value="${write_http_response}"/>
+		</condition>
+	</target>
+	<target name="query_https">
+		<input message="Include HTTPS support?" validargs="yes,no" addproperty="write_https_response" />
+  		<condition property="write_https">
+	  		<istrue value="${write_https_response}"/>
+		</condition>
+	</target>
+	<target name="query_shutdown">
+		<input message="Include shutdown support?" validargs="yes,no" addproperty="write_shutdown_response" />
+  		<condition property="write_shutdown">
+	  		<istrue value="${write_shutdown_response}"/>
+		</condition>
+	</target>
+
+	<target name="write_repackage" if="write_repackage">
+		<echo file="${configuration}" append="true">repackage_servlet_lib
+</echo>
+	</target>
+	<target name="write_http" if="write_http">
+		<echo file="${configuration}" append="true">http_support
+</echo>
+	</target>
+	<target name="write_https" if="write_https">
+		<echo file="${configuration}" append="true">https_support
+</echo>
+	</target>
+	<target name="write_shutdown" if="write_shutdown">
+		<echo file="${configuration}" append="true">shutdown_support
+</echo>
+	</target>
+
+</project>

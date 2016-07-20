@@ -1,0 +1,61 @@
+#!/bin/bash
+#
+# orangefood-servletengine      This shell script takes care of starting and stopping
+#                               of the Orangefood.com Servlet Engine.
+#
+# chkconfig: 2345 80 30
+# description: Orangefood.com Servlet engine is a Java Servlet Engine
+# processname: orangefood-servletengine
+
+JVM=/usr/local/bin/java
+
+# Source orangefood.com servlet engine  configureation.
+if [ -f /etc/sysconfig/orangefood-servletengine ] ; then
+	. /etc/sysconfig/orangefood-servletengine
+else
+	SHUTDOWNPORT=9009
+	SHUTDOWNPASSWORD=shutdownpass
+	JARFILE=/usr/local/orangefood-servletengine/orangefood-servletengine.jar
+fi
+
+# Check that jar file exists
+[ -f ${JARFILE} ] || exit 0
+
+RETVAL=0
+prog="orangefood.com servlet engine"
+
+start() {
+	# Start daemons.
+	echo $"Starting $prog: "
+	cd /usr/local/orangefood-servletengine/
+	${JVM} -jar ${JARFILE} &
+	RETVAL=$?
+}
+
+stop() {
+	# Stop daemons.
+	echo $"Shutting down $prog: "
+	${JVM} -cp ${JARFILE} com.orangefood.se.StopServer ${SHUTDOWNPASSWORD} ${SHUTDOWNPORT}
+	RETVAL=$?
+	return $RETVAL
+}
+
+# See how we were called.
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart|reload)
+	stop
+	start
+	RETVAL=$?
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+exit $RETVAL

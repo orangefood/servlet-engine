@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<classpath>
+    <classpathentry kind="src" path="filters/src"/>
+    <classpathentry kind="src" path="junit/src"/>
+    <classpathentry kind="src" path="server/src"/>
+    <classpathentry kind="src" path="servlets/src"/>
+    <classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+    <classpathentry kind="lib" path="server/lib/servlet-2.3.jar"/>
+    <classpathentry kind="output" path="classes"/>
+</classpath>

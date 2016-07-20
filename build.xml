@@ -1,0 +1,209 @@
+<project name="orangefood-servletengine" basedir="." default="all">
+	<!-- load the build configuration properties -->
+	<property name="configuration" value="${basedir}/configure.properties"/>
+	<property file="${configuration}"/>
+		
+	<!-- debugging off by default -->
+	<property name="debug" value="false"/>
+	
+	<!-- set the source directories -->
+	<property name="server" value="${basedir}/server"/>
+	<property name="filters" value="${basedir}/filters"/>
+	<property name="servlets" value="${basedir}/servlets"/>
+	<property name="junit" value="${basedir}/junit/"/>
+	<property name="html" value="${basedir}/html/"/>
+	<property name="scripts" value="${basedir}/scripts/"/>
+	
+	<!-- set the build directories -->
+	<property name="config" value="${basedir}/config/"/>
+	<property name="release" value="${basedir}/release/"/>
+	<property name="build" value="${release}/build"/>
+	<property name="classes" value="${build}/classes"/>
+	
+	<!-- common file names or file sets -->
+	<property name="jarfile" value="${release}/${ant.project.name}.jar"/>
+	
+	<!-- Initilization target, adds tasks, sets time stamp and creates dir struct -->
+	<target name="init">
+		<!-- Create the time stamp -->
+		<tstamp/>
+		
+		<!-- Create the build directory structure -->
+		<mkdir dir="${release}"/>
+		<mkdir dir="${build}"/>
+		<mkdir dir="${classes}"/>
+	</target>
+
+	<!-- Compiles server code to .class copies non-CVS/non-.java to the dest dir -->	
+	<target name="server" depends="init" if="build_server">
+		<ant dir="${server}" target="compile" inheritall="false"/>
+		<copy todir="${build}">
+			<fileset dir="${server}/release/build/" />
+		</copy>
+		<copy todir="${release}/keys">
+			<fileset dir="${server}/release/keys/" />
+		</copy>
+	</target>
+
+	<target name="servlets" depends="init" if="build_servlets">
+		<ant dir="${servlets}" target="compile" inheritall="false">
+			<property name="modify_web" value="true"/>
+		</ant>
+		<copy todir="${build}">
+			<fileset dir="${servlets}/release/build/" />
+		</copy>
+	</target>
+
+	<target name="filters" depends="init" if="build_filters">
+		<ant dir="${filters}" target="compile" inheritall="false">
+			<property name="modify_web" value="true"/>
+		</ant>
+		<copy todir="${build}">
+			<fileset dir="${filters}/release/build/" />
+		</copy>
+	</target>
+	
+	<target name="junit" depends="init,html" if="build_junit">
+		<ant dir="${junit}" inheritall="false"/>	
+		<copy file="${junit}/release/orangefood-servletengine-junit.jar" todir="${release}/html/WEB-INF/lib" />
+		<copy file="${junit}/WEB-INF/web.xml" todir="${release}/html/WEB-INF" />
+	</target>		
+
+	<!-- Copy the html directory to the release directory -->
+	<target name="html" depends="init">
+		<copy todir="${release}/html">
+			<fileset dir="${html}"/>
+		</copy>
+	</target>
+	<target name="scripts" depends="init">
+		<copy todir="${release}/scripts">
+			<fileset dir="${scripts}"/>
+		</copy>
+	</target>
+	
+	<!-- Jars .class + other files -->
+	<target name="jar" depends="init,server,servlets,filters,junit">
+		<jar jarfile="${jarfile}" basedir="${classes}">
+			<manifest>
+				<attribute name="Main-Class" value="com.orangefood.se.Server"/>
+			</manifest>
+		</jar>
+		<delete dir="${build}"/>
+	</target>
+	
+
+	<target name="debug" depends="init">
+		<antcall target="all">
+			<param name="debug" value="true"/>
+		</antcall>
+	</target>
+	
+	<!-- The default build, makes everything -->
+	<target name="all" depends="init,html,scripts,jar"/>
+	
+	<!-- The install target -->
+	<target name="install">
+		<ant dir="${release}" antfile="../install.xml"/>
+	</target>
+		
+	<!-- Clears up after the build -->
+	<target name="clean">
+		<!-- Delete the ${build} and ${dist} directory trees -->
+		<delete dir="${release}"/>
+		<antcall target="clean_server"/>
+		<antcall target="clean_servlets"/>
+		<antcall target="clean_filters"/>
+		<antcall target="clean_junit"/>
+	</target>
+	<target name="clean_server" if="build_server">
+		<ant dir="${server}" target="clean" inheritAll="false"/>
+	</target>
+	<target name="clean_servlets" if="build_servlets">
+		<ant dir="${servlets}" target="clean" inheritAll="false"/>
+	</target>
+	<target name="clean_filters" if="build_filters">
+		<ant dir="${filters}" target="clean" inheritAll="false"/>
+	</target>
+	<target name="clean_junit" if="build_junit">
+		<ant dir="${junit}" target="clean" inheritAll="false"/>
+	</target>				
+	
+	<!-- Configures the build -->
+	<target name="configure" depends="init">
+  		  <delete file="${configuration}"/>
+		  <touch file="${configuration}"/>
+  		  <antcall target="query_server"/>
+  		  <antcall target="query_servlets"/>
+  		  <antcall target="query_filters"/>
+  		  <antcall target="query_junit"/>
+	</target>
+	
+	<target name="query_server">
+		  <input
+    	   message="Build server?"
+		   validargs="yes,no"
+		   addproperty="build_server_response"
+  		  />
+  		  <condition property="write_build_server">
+	  		  <istrue value="${build_server_response}"/>
+  		  </condition>
+  		  <antcall target="build_server"/>
+	</target>
+	<target name="build_server" if="write_build_server">
+		<echo file="${configuration}" append="true">build_server
+</echo>
+		<ant dir="${server}" target="configure" inheritAll="false"/>
+	</target>
+	
+	<target name="query_servlets">
+		  <input
+    	   message="Build servlets?"
+		   validargs="yes,no"
+		   addproperty="build_servlets_response"
+  		  />
+  		  <condition property="write_build_servlets">
+	  		  <istrue value="${build_servlets_response}"/>
+  		  </condition>
+  		  <antcall target="build_servlets"/>
+	</target>
+	<target name="build_servlets" if="write_build_servlets">
+		<echo file="${configuration}" append="true">build_servlets
+</echo>
+		<ant dir="${servlets}" target="configure" inheritAll="false"/>
+	</target>
+	
+	<target name="query_filters">
+		  <input
+    	   message="Build filters?"
+		   validargs="yes,no"
+		   addproperty="build_filters_response"
+  		  />
+  		  <condition property="write_build_filters">
+	  		  <istrue value="${build_filters_response}"/>
+  		  </condition>
+  		  <antcall target="build_filters"/>
+	</target>	
+	<target name="build_filters" if="write_build_filters">
+		<echo file="${configuration}" append="true">build_filters
+</echo>
+		<ant dir="${filters}" target="configure" inheritAll="false"/>
+	</target>
+	
+	<target name="query_junit">
+		  <input
+    	   message="Build JUnit?"
+		   validargs="yes,no"
+		   addproperty="build_junit_response"
+  		  />
+  		  <condition property="write_build_junit">
+	  		  <istrue value="${build_junit_response}"/>
+  		  </condition>
+  		  <antcall target="build_junit"/>
+	</target>	
+	<target name="build_junit" if="write_build_junit">
+		<echo file="${configuration}" append="true">build_junit
+</echo>
+		<ant dir="${junit}" target="configure" inheritAll="false"/>
+	</target>			
+
+</project>

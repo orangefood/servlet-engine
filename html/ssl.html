@@ -1,0 +1,52 @@
+<html>
+<head><title>orangefood.com servlet engine run instructions</title></head>
+<body>
+
+<h1><a name="top">SSL Instructions</a></h1>
+<p><a href="index.html">home</a></p>
+<hr/>
+<ol>
+<li>
+Create the server key:<br/>
+<code>openssl genrsa -des3 -out server.key 1024</code>
+</li>
+<li>
+Remove the passphrase:<br/>
+<code>openssl rsa -in server.key -out server.pem</code>
+</li>
+<li>
+Generate the CSR.
+Set Common Name to the fully qualified domain name.
+<code>openssl req -new -key server.key -out server.csr</code>
+</li>
+openssl x509 -req -days 60 -in server.csr -signkey server.key -out server.crt
+keytool -genkey -alias server -keyalg RSA -keystore serverKeys
+
+
+<a href="#unix">Unix</a><br/>
+<a href="#windows">Windows</a><br/>
+<a href="#manual">Manual</a><br/>
+<p>
+This dcoument contains instructions for starting and stoping the Servlet
+Engine.
+</p>
+
+<h2><a name="unix">Unix</a></h2>
+<p>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="windows">Windows</a></h2>
+<p>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="manual">Manual</a></h2>
+<p>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<hr />
+<p>Previous: <a href="install.html">install</a> | <a href="index.html">home</a> | Next: <a href="configure.html">configure</a></p>
+</body>
+</html>

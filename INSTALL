@@ -1,0 +1,71 @@
+INSTALLING
+Advanced configuration and instalation instructions can be found in the 
+config.html document in the 'html' directory or if the server has been 
+started (see the RUN document) the file can be viewed at:
+http://localhost:8008/config.html
+
+QUICK & EASY INSTALL
+You can use the Ant build software (http://ant.apache.org) to install the 
+server.
+1. 'cd' to the directory that contains project
+2. type: 'ant install'
+This will install the server to the default location.
+The default location for the install is:
+  windows - C:\Program Files\orangefood-servletengine\
+  unix    - /usr/local/orangefood-servletengine/
+The documents are served fromt the html directory below the install directory.
+
+The location of the install can be changed by passing a prefix variable to Ant.
+For example, 'ant install -Dprefix=/home/user/' will install the server to
+/home/user/orangefood-servletengine
+
+MANUAL INSTALL
+You can manually install the Servlet Engine simply by copying the binary
+jar file.
+To install the server:
+1. Create a directoy to hold the program.  e.g 'mkdir /usr/local/of-servlet'
+2. Copy the .jar file, to that directry.
+   e.g. 'cp orangefood-servletengine.jar /usr/local/of-servlet'
+3. Create a directory to hold the HTML documents. 
+   e.g. 'mkdir /usr/local/of-servlet/html'
+   
+STARTUP SCRIPTS
+The distribution comes with startup scripts for Unix and Windows. The 
+scripts are in the 'scripts' directory.
+
+Unix
+On Unix ant install will install an init script to /etc/init.d and an assocated 
+configuration file to /etc/sysconfig.  The init script is compatible with 
+the chkconfig program.  To add the server to the starup and shutdown sequences
+with chkconfig type 'chkconfig --add ornagefood-servletengine'
+
+If you manually installed there server you will need to copy the Unix start
+scripts to the approprate locations.  Copy 'scripts/orangefood-servletengine'
+to '/etc/init.d'.  Copy 'scripts/sysconfig/orangefood-servletengine' to
+'/etc/sysconfig/'.
+
+Windows
+The Orangefood.com Servlet Engine can be installed as a Service under windows.
+The JavaService program from Alexandria Software Consulting is used for this
+purpose.  The program can be downloaded from 
+http://www.alexandriasc.com/software/JavaService/index.html.  
+
+A script is provided to install and configure the service.  
+Before you run the script to install the service you must have 
+satisfied these prerequisites:
+ * Installed the Orangefood.com Service Engines
+ * Downloaded and unpacked the JavaService program
+ * Set the JAVA_HOME environment varriable to the location of the JRE
+
+The script assumes that you have installed the Servlet Engine to
+C:\Program Files\orangefood-servletengine\ and that you have unpacked 
+the JavaService program to C:\Program Files\javaservice.  
+
+If you have installed the Servlet Engine and the unpacked the JavaService 
+program to their defualt locations you can simply run ntservice -install. 
+If you did not used the default locations you can use the following command 
+line parameters to configure the service appropratly.
+-server_dir [path] 	    Sets the directory the server is installed in
+-javaservice [path] 	Sets the path to the JavaService program
+-password [password] 	Sets the shutdown password to use
+-port [port] 	        Sets the port number for the shutdown listener

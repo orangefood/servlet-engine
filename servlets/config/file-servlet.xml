@@ -1,0 +1,8 @@
+        <servlet>
+                <servlet-name>file</servlet-name>
+                <servlet-class>com.orangefood.se.servlets.file.FileServlet</servlet-class>
+                <init-param>
+                	<param-name>index_servlet</param-name>
+                	<param-value>index</param-value>
+                </init-param>
+        </servlet>

@@ -1,0 +1,22 @@
+Release 0.2.0 - 20-June-2004
+* Startup/Shutdown support
+  - Added socket shutdown listener/handler
+  - Unix init script
+  - Windows batch file configure JavaService
+
+* Build changes
+  - Release archives expand into a directory with the version in the name
+  - Checks so up to date tasks don't run
+  - Tasks for install
+  - RPM packages for source and binary
+
+* Server changes
+  - SSL support
+  - Cache property files in method Server.getProperties()
+  - Configuration locations can be passed on the command line
+  - Honor load-on-startup for servlets
+  - Allow multiple listeners (e.g. HTTP, HTTPS) to share a ServletContext
+  - Notify listeners of life cycle events
+
+Release 0.1 - 09-June-2004
+* Initial relase

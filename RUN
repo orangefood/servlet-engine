@@ -1,0 +1,33 @@
+ABOUT
+This document contains instructions for starting and stoping the server. Three
+methods are described.  The MANUAL section describes how to stop and start
+the server from the command-line by directly invoking the Java Virtual Machine.
+The UNIX section describes how to start and stop the server using a script
+and the 'service' program.  The WINDOWS section describes how to start and
+stop the server as a Windows Service.
+
+The shutdown mechanism requires a password to shutdown the server.  The
+default password is 'shutdownpass'.  Instructions for changing the password
+can be found in the configuration document, config.html.
+
+MANUAL
+Starting:
+1. 'cd' to the direcoty containing the binary jar file.
+2. Type 'java -jar orangefood-servletengine.jar' to start the server.
+
+Stoping
+1. 'cd' to the direcoty containing the binary jar file.
+2. Type 'java -cp orangefood-servletengine.jar com.orangefood.se.StopServer [password] [port]'
+   Where password is the shutdown 'password' (default: shutdownpass) and 'port'
+   is the port on which the server is listening for the shutdown command 
+   (default: 9009.)
+
+UNIX
+Starting:
+1. As superuser type 'service start orangefood-servletengine'
+
+Stoping
+1. As superuser type 'service stop orangefood-servletengine'
+
+WINDOWS
+...to do...

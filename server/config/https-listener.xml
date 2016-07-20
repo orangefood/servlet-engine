@@ -1,0 +1,10 @@
+        <!-- The listener that listens for HTTPS requests -->
+        <listener name="https" class="com.orangefood.se.net.SecureSocketListener" >
+                <!-- <bind-address></bind-address> -->
+                <port>8043</port>
+                <listen-timeout>5000</listen-timeout>
+                <read-timeout>10000</read-timeout>
+                <handler>https</handler>
+                <keystore>keys/serverKeys</keystore>
+                <keystore-password>changeit</keystore-password>
+        </listener>

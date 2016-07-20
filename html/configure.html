@@ -1,0 +1,149 @@
+<html>
+<head><title>orangefood.com servlet engine run instructions</title></head>
+<body>
+
+<h1><a name="top">Configuration Instructions</a></h1>
+<p>&larr; <a href="run.html">run</a> | <a href="index.html">home</a> | <a href="design.html">design</a> &rarr;</p>
+<hr/>
+<p>
+<a href="#server.xml"><code>server.xml</code></a><br/>
+<a href="#web.xml"><code>web.xml</code></a><br/>
+</p>
+<p>
+This document contains information on the configuration of the Orangefood.com Servlet Engine.
+There are two configuration files that define the runtime behavior of the server, <code>server.xml</code>
+ which contains configuration options for the entire server and <code>web.xml</code> which 
+ contains configuration information for the servlet context.
+</p>
+<h2><a name="server.xml"><code>server.xml</code></a></h2>
+<p>
+The <code>server.xml</code> file contains information that describes propritary configuration
+options for the Ornagefood.com Servlet Engine.  Specifically this file describes, 
+<code>servlet contexts</code> within which the servlets run, <code>listeners</code> that 
+listen for connections on a specific TCP port and <code>handlers</code> that handle the
+connection once it has been made to the server.  The releationship between these concepts is
+as follows. The server may have one or more <code>listeners</code> that listens for connections,
+each listner must reference a handler which will handle the connextion.  Every handler must reference
+a <code>context</code> within which the connection will be processed.
+</p>
+<p>
+The file is formated as an XML file. The top element is <code>&lt;server&gt;</code>.  Within
+the server element the following elements are supported, in order, 
+<code>&lt;tempdir&gt;</code>, 
+<code>&lt;context&gt;</code>, 
+<code>&lt;handler&gt;</code>, 
+<code>&lt;listener&gt;</code>.
+The <code>&lt;tempdir&gt;</code> element specifies the temporary working directory for the
+server.  Individual contexts will have their own temporary directory below this.  If not
+provided the server will use the <code>java.io.tmpdir</code> system property as the 
+temporary directory.  If the element specifies a relative directory then that directory is created 
+below the temporary directory given by <code>java.io.tmpdir</code>.
+</p>
+
+<h3>Listener</h3>
+The server comes with two listeners, a <code>com.orangefood.se.net.TCPSocketListener</code>
+that listens for connections on a TCP port, a <code>com.orangefood.se.net.SecureSocketListener</code>
+that listens for connections using SSL.  The <code>&lt;listener&gt;</code> element takes two
+attributes, <code>name</code>, a unique name that serves to identify the listener uniquely and
+<code>class</code>, the fully qualified class name that implements <code>com.orangefood.se.net.SocketListener</code>.
+Within the <code>&lt;listener&gt;</code> the following child elements are supported for
+the <code>com.orangefood.se.net.TCPSocketListener</code>:
+<ul>
+<li><code>&lt;bind-address&gt;</code> - The address of the local interface on which to listen. 
+If not provided this listener listens on all interfaces</li>
+<li><code>&lt;port&gt;</code> - The local port on which the listener listens.  A value of 0
+causes the listener to listen on any free port.</li>
+<li><code>&lt;listen-timeout&gt;</code> - Sets the length of time in milliseconds that
+the listener waits for a connection.  A value of 0 is interpreted as an infinite timeout.  The 
+longer the timeout the longer it will take the server to shutdown.  For example is the timeout
+is set to 1000, then every second the listening socket will timeout and the listener will
+check if it should keep running.  If the value were set to 0 then the server would block
+indefinatly and if it never received a connection would never check it's run status and
+would therefore never shutdown gracefully.  If not provided the default value is 5000 milliseconds
+(5 seconds).</li>
+<li><code>&lt;read-timeout&gt;</code> - Sets the length of time to keep the socket open 
+when no data is avaibale.  The length is specified in milliseconds.  If not provided
+the default value is 10000 milliseconds (10 seconds).</li>
+</ul>
+</p>
+<p>
+The <code>com.orangefood.se.net.SecureSocketListener</code> listener supports
+two additional child elements:
+<ul>
+<li><code>&lt;keystore&gt;</code> - The name of the keystore file that contains the 
+server certificate.</li>
+<li><code>&lt;keystore-password&gt;</code> - The password for the keystore</li>
+</ul>
+</p>
+
+<h3>Handler</h3>
+<p>
+Handlers accept sockets connections that have been received from listeners.  
+Handlers understand the application level protocol and process the connection 
+accordingly.  The server comes with one handler 
+(<code>com.orangefood.se.http.HttpHandler</code>) for processing hypertext 
+transfer protocol (HTTP) connections and another special purpose handler, <code>com.orangefood.se.ShutdownHandler</code>
+, that handles requests to stop the server.
+The <code>&lt;handler&gt;</code> element takes two
+attributes, <code>name</code>, a unique name that serves to identify the handler and
+<code>class</code>, the fully qualified class name that implements 
+<code>com.orangefood.se.net.SocketHandler</code>. Within the 
+<code>&lt;handler&gt;</code> element the following child elements are supported for
+the <code>com.orangefood.se.http.HttpHandler</code>:
+<ul>
+<li>&lt;context&gt; - The context to use when processing connections.</li>
+<li>&lt;scheme&gt; - The scheme the expected protocol, e.g. http or https.</li>
+</ul>
+</p>
+<p>
+The <code>com.orangefood.se.ShutdownHandler</code> takes only one
+child element, <code>&lt;password&gt;</code>.  This is the password
+used to shutdown the server.  It is a good idea to change this password 
+from the default as anyone with this access to the shutdown port (specified
+in the shutdown listener) can stop the server with knowledge of this password.
+If you do change either the port or the password be sure to update the shutdown
+scripts with the new information.  For Unix users edit <code>/etc/sysconfig/orangefood-servletengine</code>.
+Windows users will have to provide the correct information on the command line
+for <code>ntservice.bat</code> when <a href="install.html#windows_service">configuring</a>
+the server as a Windows Service.
+</p>
+
+<h3>Context</h3>
+<p>
+The context describes an environment in which conntections are processed
+multiple handlers can reference the same context.  For example an HTTP and HTTPS
+could handle connections for the same context.  WIthin the <code>&lt;context&gt;</code>
+element the following child elements are supported:
+<ul>
+<li><code>&lt;tempdir&gt;</code> - The name of the temporary directory for this context.  If
+the directory is realitive then the directory is created below the server's temporary directory
+otherwise the absolute directory is used. If this element is not provided then a randomly generated
+directory name below the server temporary directory is used.</li>
+<li><code>&lt;hostname&gt;</code> - The hostname to which the context applys.</li>
+<li><code>&lt;document-root&gt;</code> - The location of the document root where the 
+HTML files are located and under which the <code>WEB-INF</code> directory can be found.</li>
+</ul>
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+<h2><a name="web.xml"><code>web.xml</code></a></h2>
+<p>
+The <code>web.xml</code> file is the XML based deployment descriptor described in chapter SRV.13
+of the Servlet 2.3 specification.  Within the configuration directory (see the 
+<a href="run.html#options">run</a> document for instructions on how to set the configuration directory)
+a global <code>web.xml</code> contains configuration information that applys to all 
+contexts.  Additionally the <code>web.xml<code> found in the <code>WEB-INF</code> directory
+below the context <code>document-root<code> (see above) contains configuration information
+unique to that context.
+</p>
+<p>
+A complete description of the Servlet 2.3 deployment descriptor is beyond the scope of this 
+document.  Detailed information can be found in chapter SRV.13 of the 
+<a href="http://jcp.org/aboutJava/communityprocess/first/jsr053/index.html">Java Servlet Specification Version 2.3</a>.
+</p>
+<p>[<a href="#top">top</a>][<a href="index.html">home</a>]</p>
+
+
+<hr />
+<p>&larr; <a href="run.html">run</a> | <a href="index.html">home</a> | <a href="design.html">design</a> &rarr;</p></body>
+</html>

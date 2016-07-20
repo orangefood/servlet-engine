@@ -1,0 +1,5 @@
+		<!-- manages the sessions -->
+		<filter>
+			<filter-name>session</filter-name>
+			<filter-class>com.orangefood.se.filters.session.SessionFilter</filter-class>
+		</filter>

@@ -1,0 +1,42 @@
+<html>
+<head><title>Junit Test page</title></head>
+<body>
+	
+<h1>Junit Tests</h1>
+<p>
+The following links and forms are designed to test the servlet functionality
+of the orangefood.com Servlet Engine.  These pages are meant to be served by
+the orangefood.com Servlet Engine.  If you are view these pages from the 
+file system the links and forms will not work.  To build the orangefood.com
+Servlet Engine please review the INSTALL file in the directory containing
+project source.
+</p>
+<a href="/junit/session/">Junit Session Page</a><br/>
+<a href="/junit/spy/">Junit Spy Page</a><br/>
+
+<form action="/junit/spy/" method="get">
+Junit Spy Form (method get)<br/>
+<input type="checkbox" name="checkbox" value="first"/>First checkbox<br/>
+<input type="checkbox" name="checkbox" value="second"/>Second checkbox<br/>
+<input type="checkbox" name="checkbox" value="third"/>Third checkbox<br/>
+Text: <input type="text" name="text"/><br/>
+<input type="submit" name="submit" value="Junit Test Servlet"/><br/>
+</form>
+
+<form action="/junit/spy/" method="post">
+Junit Spy Form (method post)<br/>
+<input type="checkbox" name="checkbox" value="first"/>First checkbox<br/>
+<input type="checkbox" name="checkbox" value="second"/>Second checkbox<br/>
+<input type="checkbox" name="checkbox" value="third"/>Third checkbox<br/>
+Text: <input type="text" name="text"/><br/>
+<input type="submit" name="submit" value="Junit Test Servlet"/><br/>
+</form>
+
+<form action="/junit/spy/" method="post" enctype="multipart/form-data">
+Junit Spy Form (file upload)
+<input type="file" id="uploaded_file" name="uploaded_file" size="50" />
+<input type="submit" name="submit" value="Junit Test Servlet"/><br/>
+</form>
+
+</body>
+</html>
